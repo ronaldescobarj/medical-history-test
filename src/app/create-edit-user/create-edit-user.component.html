@@ -1,0 +1,35 @@
+<div class="col-md-12">
+  <button class="btn btn-secondary" title="Go back" (click)="goBack()">
+    <span class="fas fa-arrow-circle-left"></span>
+  </button>
+</div>
+
+<div *ngIf="show" class="container">
+  <div class="row">
+    <div class="col-md-12 col-md-offset-6">
+      <form class="form-horizontal" role="form">
+        <h2 *ngIf="action=='edit'">Editar usuario</h2>
+        <h2 *ngIf="action=='create'">Crear usuario</h2>
+        <div class="form-group">
+          <div class="col-md-9">
+            <label class="validation-message">Nombre</label>
+            <input name="name" [(ngModel)]="user.name" type="text" placeholder="Nombre" class="form-control" />
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-md-9">
+            <label class="validation-message">Apellido</label>
+            <input name="doctor" [(ngModel)]="user.last_name" type="text" placeholder="Apellido" class="form-control" />
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-md-3">
+            <button class="btn btn-success btn-block" (click)="saveChanges()">Guardar</button>
+            <button class="btn btn-danger btn-block" (click)="goBack()">Cancelar</button>
+          </div>
+        </div>
+        <div *ngIf="!firstTime && errorMessage" class="help-block">{{errorMessage}}</div>
+      </form>
+    </div>
+  </div>
+</div>

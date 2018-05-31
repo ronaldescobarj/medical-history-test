@@ -1,0 +1,38 @@
+<div class="col-md-12">
+  <button class="btn btn-secondary" title="Go back" (click)="goBack()">
+    <span class="fas fa-arrow-circle-left"></span>
+  </button>
+  <a class="btn btn-primary" title="Editar usuario" routerLink="/user/edit/{{userId}}">
+    <span class="fas fa-user-edit"></span>
+  </a>
+</div>
+
+<blockquote *ngIf="show" class="blockquote text-center">
+  <h1>
+    <b>Informacion del usuario</b>
+  </h1>
+  <br>
+  <br>
+  <div class="container">
+    <table class="table table-striped">
+      <tbody>
+        <tr>
+          <td>Nombre</td>
+          <td>{{user.name}}</td>
+        </tr>
+        <tr>
+          <td>Apellido</td>
+          <td>{{user.last_name}}</td>
+        </tr>
+        <!--         <tr>
+          <td>Fecha de nacimiento</td>
+          <td>{{consultation.birthdate}}</td>
+        </tr>
+        <tr>
+          <td>Alergias</td>
+          <td>{{consultation.allergies}}</td>
+        </tr> -->
+      </tbody>
+    </table>
+  </div>
+</blockquote>

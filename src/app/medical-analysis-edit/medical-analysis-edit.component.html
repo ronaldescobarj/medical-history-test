@@ -1,0 +1,87 @@
+<div *ngIf="!show" class="col-md-12">
+    <div class="col-md-3">
+        <button class="btn btn-secondary" title="Go back" (click)="goBack()">
+            <span class="fas fa-arrow-circle-left"></span>
+        </button>
+    </div>
+    <br/>
+    <h4 *ngIf="show && error">{{error}}</h4>
+</div>
+<div *ngIf="show && !error" class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-3">
+                <button class="btn btn-secondary" title="Go back" (click)="goBack()">
+                    <span class="fas fa-arrow-circle-left"></span>
+                </button>
+            </div>
+            <br/>
+        </div>
+        <div class="col-md-12 col-md-offset-6">
+            <form class="form-horizontal" role="form">
+                <h2>Editar un analisis medico</h2>
+                <div class="form-group">
+                    <div class="col-md-9">
+                        <label class="validation-message">Resumen</label>
+                        <input name="summary" [(ngModel)]="medicalAnalysis.summary" type="text" placeholder="Resumen" class="form-control" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-9">
+                        <label class="validation-message">Tipo *</label>
+                        <input name="type" (input)="typeValidator=true; typeError=false" [style.border-color]="borderColor()" [(ngModel)]="medicalAnalysis.type"
+                            type="text" placeholder="Tipo" class="form-control" />
+                        <div *ngIf="typeError && !firstTime" style="color: tomato">Introduzca el tipo</div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-9">
+                        <label class="validation-message">Hospital</label>
+                        <input name="hospital" [(ngModel)]="medicalAnalysis.hospital" type="text" placeholder="Hospital" class="form-control" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-9">
+                        <label class="validation-message">Comentario</label>
+                        <textarea name="commentary" [(ngModel)]="medicalAnalysis.commentary" rows="5" placeholder="Comentario" class="form-control"></textarea>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-9">
+                        <label class="validation-message">Fecha *</label>
+                        <input required="required" name="date" [(ngModel)]="medicalAnalysis.date" placeholder="AAAA-MM-DD" class="form-control">
+                        <div *ngIf="dateError && !firstTime" style="color: tomato">Introduzca la fecha</div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-9">
+                            <label class="validation-message">Agregar imagenes</label>
+                            <input multiple type="file" #fileupload name="image" class="form-control" (change)="onFileChange($event)">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="validation-message">Imagenes</label>
+                        <div *ngFor="let imgDecoded of imagesDecoded">
+                            <div class="card" style="width: 18rem;">
+                                <img class="card-img-top" [src]="imgDecoded.img" alt="Card image cap">
+                                <div class="card-body">
+                                    <button class="btn btn-danger" (click)="deleteImage(imgDecoded.id)">Eliminar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            <button class="btn btn-success btn-block" (click)="saveChanges()">Guardar</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-9">
+                            <div>Los campos con * son obligatorios</div>
+                            <div *ngIf="(dateError || typeError) && !firstTime" style="color: tomato">Por favor introduzca los datos marcados como obligatorios</div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

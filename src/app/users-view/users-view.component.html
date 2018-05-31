@@ -1,0 +1,21 @@
+<div *ngIf="show" class="col-md-6 col-md-offset-3">
+  <h2>Seleccionar usuario</h2>
+  <button [disabled]="users.length == 4" class="btn btn-success" title="Agregar usuario" (click)="addUser()">
+    <span class="fas fa-user-plus"></span>
+  </button>
+  <div *ngIf="users.length == 4">Solo se puede tener un maximo de cuatro usuarios por cuenta</div>
+  <div *ngFor="let user of users">
+    <div class="card" style="width: 18rem;">
+      <div class="card-img-top">
+        <span class="fas fa-user-circle"></span>
+      </div>
+      <div class="card-body">
+        <h5 class="card-title">{{user.name}} {{user.last_name}}</h5>
+        <button class="btn btn-primary" (click)="selectUser(user)">Select</button>
+        <a class="btn btn-secondary" routerLink="/viewUser/{{user.id}}">View</a>
+        <app-delete-modal #deleteModal [type]="'usuario'" (canceling)="refresh()" (deleting)="deleteUser(user)"></app-delete-modal>
+        <button class="btn btn-danger" (click)="deleteModal.open()">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,64 @@
+<div class="col-md-12">
+  <button class="btn btn-secondary" title="Go back" (click)="goBack()">
+    <span class="fas fa-arrow-circle-left"></span>
+  </button>
+</div>
+
+<div *ngIf="show" class="container">
+  <div class="row">
+    <div class="col-md-12 col-md-offset-6">
+      <form class="form-horizontal" role="form">
+        <h2>Administrar cuenta</h2>
+        <div class="form-group">
+          <div class="col-md-9">
+            <label class="validation-message">Nombre de usuario</label>
+            <input name="username" [(ngModel)]="account.username" type="text" placeholder="Nombre de usuario" class="form-control" />
+          </div>
+        </div>
+
+        <div *ngIf="!changePassword" class="form-group">
+          <div class="col-md-3">
+            <button class="btn btn-success btn-block" (click)="changePassword = true">Cambiar contraseña</button>
+          </div>
+        </div>
+
+        <div *ngIf="changePassword">
+          <div class="form-group">
+            <div class="col-md-9">
+              <label class="validation-message">Contraseña actual</label>
+              <input name="currentPassword" [(ngModel)]="passwords.currentPassword" type="password" placeholder="Contraseña actual" class="form-control"
+              />
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-md-9">
+              <label class="validation-message">Nueva contraseña</label>
+              <input name="newPassword" [(ngModel)]="passwords.newPassword" type="password" placeholder="Nueva contraseña" class="form-control"
+              />
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-md-9">
+              <label class="validation-message">Confirmar nueva contraseña</label>
+              <input name="newPasswordConfirm" [(ngModel)]="passwords.newPasswordConfirm" type="password" placeholder="Confirmar nueva contraseña"
+                class="form-control" />
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-md-3">
+              <button class="btn btn-success btn-block" (click)="resetNewPassword()">Cancelar</button>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="form-group">
+          <div class="col-md-3">
+            <button class="btn btn-success btn-block" (click)="saveChanges()">Guardar</button>
+          </div>
+        </div>
+        <div *ngIf="errorMessage">{{errorMessage}}</div>
+      </form>
+    </div>
+  </div>
+</div>

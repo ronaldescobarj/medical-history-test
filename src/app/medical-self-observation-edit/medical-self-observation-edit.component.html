@@ -1,0 +1,62 @@
+<div *ngIf="!show" class="col-md-12">
+    <div class="col-md-3">
+        <button class="btn btn-secondary" title="Go back" (click)="goBack()">
+            <span class="fas fa-arrow-circle-left"></span>
+        </button>
+    </div>
+    <br/>
+    <h4 *ngIf="show && error">{{error}}</h4>
+</div>
+
+<div *ngIf="show && !error" class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-3">
+                <button class="btn btn-secondary" title="Go back" (click)="goBack()">
+                    <span class="fas fa-arrow-circle-left"></span>
+                </button>
+            </div>
+            <br/>
+        </div>
+        <div class="col-md-12 col-md-offset-6">
+            <form class="form-horizontal" role="form">
+                <h2>Editar una observacion propia</h2>
+                <div class="form-group">
+                    <div class="col-md-9">
+                        <label class="validation-message">Resumen</label>
+                        <input name="summary" [(ngModel)]="medicalSelfObservation.summary" type="text" placeholder="Resumen" class="form-control"
+                        />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-9">
+                        <label class="validation-message">Observacion *</label>
+                        <input name="observation" (input)="observationValidator=true; observationError=false" [style.border-color]="borderColor()"
+                            [(ngModel)]="medicalSelfObservation.observation" type="text" placeholder="Observacion" class="form-control"
+                        />
+                        <div *ngIf="observationError && !firstTime" style="color: tomato">Introduzca una observacion</div>
+
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-9">
+                        <label class="validation-message">Fecha *</label>
+                        <input name="date" [(ngModel)]="medicalSelfObservation.date" placeholder="AAAA-MM-DD" class="form-control">
+                        <div *ngIf="dateError && !firstTime" style="color: tomato">Introduzca la fecha</div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-3">
+                        <button class="btn btn-success btn-block" (click)="saveChanges()">Guardar</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-9">
+                        <div>Los campos con * son obligatorios</div>
+                        <div *ngIf="(dateError || observationError) && !firstTime" style="color: tomato">Por favor introduzca los datos marcados como obligatorios</div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

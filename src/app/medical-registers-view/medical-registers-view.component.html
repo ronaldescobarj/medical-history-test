@@ -1,0 +1,85 @@
+<div class="btn-group" style="width: 100%;">
+  <button class="btn btn-success" style="width: 33%;" (click)="createRegister('/medicalSelfObservation')">
+    Añadir una observacion
+  </button>
+
+  <button class="btn btn-success" style="width: 34%;" (click)="createRegister('/medicalConsultation')">
+    Añadir una consulta medica
+  </button>
+
+  <button class="btn btn-success" style="width: 33%;" (click)="createRegister('/medicalAnalysis')">
+    Añadir un analisis
+  </button>
+</div>
+<br>
+<br/>
+
+<div class="container">
+  <div class="table-wrapper">
+    <div class="table-title">
+      <div class="row">
+        <div class="col-sm-6">
+          <h2>Registros Medicos
+          </h2>
+        </div>
+        <div class="col-md-3">
+          <select class='btn btn-default' style="border-color:black" (change)='filterByType($event.target.value)'>
+            <option class='option' *ngFor='let type of listOfTypes' [selected]="type == selectedType" [value]="type">{{type}}</option>
+          </select>
+        </div>
+        <div class="col-sm-3">
+          <div class="search-box">
+            <input type="text" style="border-color:black" class="form-control" (input)="search($event.target.value)" placeholder="Buscar..."
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <br/>
+    <table class="table table-striped table-bordered" style="width: 90%; margin: 0 auto;">
+      <thead>
+        <tr>
+          <th>
+            <button *ngIf="sort.summary == 0" class="btn btn-default" (click)="sortRegisters('summary')">Resumen</button>
+            <button *ngIf="sort.summary == 1" class="btn btn-default" (click)="sortRegisters('summary')">Resumen &darr;</button>
+            <button *ngIf="sort.summary == 2" class="btn btn-default" (click)="sortRegisters('summary')">Resumen &uarr;</button>
+          </th>
+          <th>
+            <button *ngIf="sort.type == 0" class="btn btn-default" (click)="sortRegisters('type')">Tipo</button>
+            <button *ngIf="sort.type == 1" class="btn btn-default" (click)="sortRegisters('type')">Tipo &darr;</button>
+            <button *ngIf="sort.type == 2" class="btn btn-default" (click)="sortRegisters('type')">Tipo &uarr;</button>
+          </th>
+          <th>
+            <button *ngIf="sort.date == 0" class="btn btn-default" (click)="sortRegisters('date')">Fecha</button>
+            <button *ngIf="sort.date == 1" class="btn btn-default" (click)="sortRegisters('date')">Fecha &darr;</button>
+            <button *ngIf="sort.date == 2" class="btn btn-default" (click)="sortRegisters('date')">Fecha &uarr;</button>
+          </th>
+          <th>
+            <button class="btn btn-default">Opciones</button>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let register of registers | paginate: { itemsPerPage: 10, currentPage: p }; let i = index">
+          <td>{{register.summary}}</td>
+          <td>{{register.type}}</td>
+          <td>{{register.date}}</td>
+          <td>
+            <button class="btn btn-secondary" title="View" (click)="viewRegister(register)">
+              <span class="fa fa-info-circle"></span>
+            </button>
+            <button class="btn btn-primary" title="Edit" (click)="editRegister(register)">
+              <span class="fas fa-edit"></span>
+            </button>
+            <button class="btn btn-danger" title="Delete" (click)="deleteModal.open();">
+              <span class="fas fa-trash-alt"></span>
+            </button>
+            <app-delete-modal #deleteModal [type]="register.type" (canceling)="refresh()" (deleting)="deleteRegister(register)"></app-delete-modal>
+          </td>
+        </tr>
+      </tbody>
+      <pagination-controls (pageChange)="p = $event"></pagination-controls>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,63 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="col-md-3">
+        <button class="btn btn-secondary" title="Go back" (click)="goBack()">
+          <span class="fas fa-arrow-circle-left"></span>
+        </button>
+      </div>
+      <br/>
+    </div>
+  </div>
+  <h4 *ngIf="show && error">{{error}}</h4>
+  <blockquote *ngIf="show && !error" class="blockquote text-center">
+    <h1>
+      <b>Informacion del analisis</b>
+    </h1>
+    <br>
+    <br>
+    <div class="container">
+
+      <table class="table table-striped">
+        <tbody>
+          <tr>
+            <td>Resumen</td>
+            <td>{{analysis.summary}}</td>
+          </tr>
+          <tr>
+            <td>Tipo</td>
+            <td>{{analysis.type}}</td>
+          </tr>
+          <tr>
+            <td>Hospital</td>
+            <td>{{analysis.hospital}}</td>
+          </tr>
+          <!-- <tr>
+                <td>Text</td>
+                <td>{{analysis.description}}</td>
+              </tr> -->
+          <tr>
+            <td>Fecha</td>
+            <td>{{analysis.date}}</td>
+          </tr>
+          <tr>
+            <td>Comentario</td>
+            <td>{{analysis.commentary}}</td>
+          </tr>
+          <tr>
+            <td>Imagenes</td>
+            <td>
+              <div *ngFor="let imgDecoded of imagesDecoded">
+                <div class="card" style="width: 18rem;">
+                  <img class="card-img-top" [src]="imgDecoded" alt="Card image cap">
+                  <div class="card-body">
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </blockquote>
+</div>

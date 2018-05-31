@@ -1,0 +1,26 @@
+<div class="col-md-6 col-md-offset-3">
+  <h2>Register</h2>
+  <form name="form">
+    <div class="form-group" [ngClass]="{ 'has-error': !firstTime && !username.valid }">
+      <label for="username">Username</label>
+      <input type="text" class="form-control" name="username" [(ngModel)]="account.username" #username="ngModel" required />
+      <div *ngIf="!firstTime && !username.valid" class="help-block">Username is required</div>
+    </div>
+    <div class="form-group" [ngClass]="{ 'has-error': !firstTime && !password.valid }">
+      <label for="password">Password</label>
+      <input type="password" class="form-control" name="password" [(ngModel)]="account.password" #password="ngModel" required />
+      <div *ngIf="!firstTime && !password.valid" class="help-block">Password is required</div>
+    </div>
+    <div class="form-group" [ngClass]="{ 'has-error': !firstTime && !password.valid }">
+      <label for="passwordConfirm">Confirm password</label>
+      <input type="password" class="form-control" name="passwordConfirm" [(ngModel)]="account.passwordConfirm" #passwordConfirm="ngModel"
+        required />
+      <div *ngIf="!firstTime && !passwordConfirm.valid" class="help-block">Password confirmation is required</div>
+    </div>
+    <div class="form-group">
+      <button [disabled]="loading" class="btn btn-primary" (click)="register()">Register</button>
+      <a [routerLink]="['/login']" class="btn btn-link">Cancel</a>
+    </div>
+    <div *ngIf="!firstTime && errorMessage" class="help-block">{{errorMessage}}</div>
+  </form>
+</div>
