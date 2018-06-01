@@ -6,7 +6,7 @@ import 'rxjs/add/operator/map';
 
 @Injectable()
 export class HttpService {
-    baseUrl: string = 'http://localhost:3000/api';
+    baseUrl: string = 'https://thawing-oasis-34215.herokuapp.com/api';
     constructor(private http: Http) { }
 
     public get(url: string) {
