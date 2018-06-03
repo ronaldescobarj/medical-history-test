@@ -65,13 +65,43 @@
                 <div class="form-group">
                     <div class="col-md-9">
                         <label class="validation-message">Fecha *</label>
-                        <input name="date" [(ngModel)]="medicalConsultation.date" placeholder="AAAA-MM-DD" class="form-control">
+                        <my-date-picker name="mydate" [placeholder]="'dd-mm-aaaa'" [options]="myDatePickerOptions" [(ngModel)]="medicalConsultation.date"
+                            required></my-date-picker>
                         <div *ngIf="dateError && !firstTime" style="color: tomato">Introduzca la fecha</div>
                     </div>
                 </div>
                 <div class="form-group">
+                    <div class="col-md-9">
+                        <label class="validation-message">Agregar imagenes</label>
+                        <input multiple type="file" accept="image/jpeg,image/png" #fileupload name="image" class="form-control" (change)="onFileChange($event)">
+                    </div>
+                    <div *ngIf="imagesError && !firstTime" style="color: tomato">La aplicacion solo soporta imagenes en formato jpeg y png</div>
+                </div>
+                <div class="form-group">
+                    <label class="validation-message">Imagenes</label>
+                    <div class="row">
+                        <div *ngFor="let imgDecoded of imagesDecoded">
+                            <div class="card">
+                                <div class="column">
+                                    <img class="card-img-top" [src]="imgDecoded.img" style="width:250px; height: 250px;" (click)="openImageModal(imgDecoded.img)">
+                                    <div class="card-body">
+                                        <button class="btn btn-danger" style="margin:auto; display:block;" (click)="deleteImage(imgDecoded.id)">Eliminar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div *ngIf="showImage" class="modal">
+                    <span class="close" (click)="showImage = false">&times;</span>
+                    <img [src]="imgModal" class="modal-content">
+                </div>
+
+                <div class="form-group">
                     <div class="col-md-3">
-                        <button class="btn btn-success btn-block" (click)="saveChanges()">Guardar</button>
+                        <button [disabled]="loading" class="btn btn-success btn-block" (click)="saveChanges()">Guardar</button>
+                        <div *ngIf="loading" class="help-block">Guardando...</div>
                     </div>
                 </div>
                 <div class="form-group">

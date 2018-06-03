@@ -11,8 +11,8 @@ function prepareResponse(req) {
 }
 
 router.get('/get', function (req, res) {
-    var analysisId = req.query.analysisId;
-    var queryString = 'SELECT * FROM medical_history.image WHERE analysis_id=' + analysisId;
+    var consultationId = req.query.consultationId;
+    var queryString = 'SELECT * FROM medical_history.consultation_image WHERE consultation_id=' + consultationId;
     var response = prepareResponse(req);
     dbConnection.pool.connect(function (error, connection, done) {
         if (error) {
@@ -35,9 +35,9 @@ router.get('/get', function (req, res) {
 });
 
 function generateQuery(images) {
-    var query = "INSERT INTO medical_history.image VALUES ";
+    var query = "INSERT INTO medical_history.consultation_image(id, base_64_image, file_name, file_type, consultation_id) VALUES ";
     for (let i = 0; i < images.length; i++) {
-        query += "(" + images[i].id + ", '" + images[i].base_64_image + "', '" + images[i].file_name + "', '" + images[i].file_type + "', " + images[i].analysis_id + ")";
+        query += "(" + images[i].id + ", '" + images[i].base_64_image + "', '" + images[i].file_name + "', '" + images[i].file_type + "', " + images[i].consultation_id + ")";
         if (i == images.length - 1) {
             query += ";"
         }
@@ -76,9 +76,9 @@ router.post('/delete', function (req, res, next) {
     var data = req.body;
     var queryString = "";
     if (data.id)
-        queryString = "delete from medical_history.image where id=" + data.id;
+        queryString = "delete from medical_history.consultation_image where id=" + data.id;
     if (data.analysis_id)
-        queryString = "delete from medical_history.image where analysis_id=" + data.analysis_id;
+        queryString = "delete from medical_history.consultation_image where consultation_id=" + data.consultation_id;
     var response = prepareResponse(req);
     dbConnection.pool.connect(function (error, connection, done) {
         if (error) {

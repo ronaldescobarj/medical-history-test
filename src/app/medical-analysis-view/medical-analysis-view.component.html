@@ -17,7 +17,6 @@
     <br>
     <br>
     <div class="container">
-
       <table class="table table-striped">
         <tbody>
           <tr>
@@ -38,26 +37,27 @@
               </tr> -->
           <tr>
             <td>Fecha</td>
-            <td>{{analysis.date}}</td>
+            <td>{{analysis.date | date:'dd/MM/yyyy'}}</td>
           </tr>
           <tr>
             <td>Comentario</td>
             <td>{{analysis.commentary}}</td>
           </tr>
-          <tr>
-            <td>Imagenes</td>
-            <td>
-              <div *ngFor="let imgDecoded of imagesDecoded">
-                <div class="card" style="width: 18rem;">
-                  <img class="card-img-top" [src]="imgDecoded" alt="Card image cap">
-                  <div class="card-body">
-                  </div>
-                </div>
-              </div>
-            </td>
-          </tr>
         </tbody>
       </table>
     </div>
   </blockquote>
+  <div class="row">
+    <div *ngFor="let img of imagesDecoded">
+      <div class="column">
+        <img [src]="img" style="width:250px; height: 250px;" (click)="openImageModal(img)">
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="showImage" class="modal">
+    <span class="close" (click)="showImage = false">&times;</span>
+    <img [src]="imgModal" class="modal-content">
+  </div>
+
 </div>

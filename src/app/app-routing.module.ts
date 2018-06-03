@@ -10,7 +10,8 @@ import { MedicalAnalysisCreateComponent } from './medical-analysis-create/medica
 import { MedicalAnalysisEditComponent } from './medical-analysis-edit/medical-analysis-edit.component';
 import { MedicalSelfObservationCreateComponent } from './medical-self-observation-create/medical-self-observation-create.component';
 import { MedicalSelfObservationEditComponent } from './medical-self-observation-edit/medical-self-observation-edit.component';
-import { AuthGuard } from './guards/auth.guard';
+import { AuthAccountGuard } from './guards/authAccount.guard';
+import { AuthUserGuard } from './guards/authUser.guard';
 import { LoginComponent } from './login/login.component';
 import { RegisterAccountComponent } from './register-account/register-account.component';
 import { UsersViewComponent } from './users-view/users-view.component';
@@ -20,23 +21,23 @@ import { ManageAccountComponent } from './manage-account/manage-account.componen
 import { NotFoundComponent } from './not-found/not-found.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/registers', pathMatch: 'full', canActivate: [AuthGuard] },
+  { path: '', redirectTo: '/registers', pathMatch: 'full', canActivate: [AuthUserGuard, AuthAccountGuard] },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterAccountComponent },
-  { path: 'users', component: UsersViewComponent },
-  { path: 'account', component: ManageAccountComponent },
-  { path: 'viewUser/:id', component: UserDetailsComponent },
-  { path: 'user/:action/:id', component: CreateEditUserComponent },
-  { path: 'registers', component: MedicalRegistersViewComponent, canActivate: [AuthGuard] },
-  { path: 'medicalConsultation/:id', component: MedicalConsultationViewComponent, canActivate: [AuthGuard] },
-  { path: 'medicalAnalysis/:id', component: MedicalAnalysisViewComponent, canActivate: [AuthGuard] },
-  { path: 'medicalSelfObservation/:id', component: MedicalSelfObservationViewComponent, canActivate: [AuthGuard] },
-  { path: 'medicalConsultation/crud/create', component: MedicalConsultationCreateComponent, canActivate: [AuthGuard] },
-  { path: 'medicalConsultation/crud/edit/:id', component: MedicalConsultationEditComponent, canActivate: [AuthGuard] },
-  { path: 'medicalAnalysis/crud/create', component: MedicalAnalysisCreateComponent, canActivate: [AuthGuard] },
-  { path: 'medicalAnalysis/crud/edit/:id', component: MedicalAnalysisEditComponent, canActivate: [AuthGuard] },
-  { path: 'medicalSelfObservation/crud/create', component: MedicalSelfObservationCreateComponent, canActivate: [AuthGuard] },
-  { path: 'medicalSelfObservation/crud/edit/:id', component: MedicalSelfObservationEditComponent, canActivate: [AuthGuard] },
+  { path: 'users', component: UsersViewComponent, canActivate: [AuthAccountGuard] },
+  { path: 'account', component: ManageAccountComponent, canActivate: [AuthAccountGuard] },
+  { path: 'viewUser/:id', component: UserDetailsComponent, canActivate: [AuthAccountGuard] },
+  { path: 'user/:action/:id', component: CreateEditUserComponent, canActivate: [AuthAccountGuard] },
+  { path: 'registers', component: MedicalRegistersViewComponent, canActivate: [AuthUserGuard, AuthAccountGuard] },
+  { path: 'medicalConsultation/:id', component: MedicalConsultationViewComponent, canActivate: [AuthUserGuard, AuthAccountGuard] },
+  { path: 'medicalAnalysis/:id', component: MedicalAnalysisViewComponent, canActivate: [AuthUserGuard, AuthAccountGuard] },
+  { path: 'medicalSelfObservation/:id', component: MedicalSelfObservationViewComponent, canActivate: [AuthUserGuard, AuthAccountGuard] },
+  { path: 'medicalConsultation/crud/create', component: MedicalConsultationCreateComponent, canActivate: [AuthUserGuard, AuthAccountGuard] },
+  { path: 'medicalConsultation/crud/edit/:id', component: MedicalConsultationEditComponent, canActivate: [AuthUserGuard, AuthAccountGuard] },
+  { path: 'medicalAnalysis/crud/create', component: MedicalAnalysisCreateComponent, canActivate: [AuthUserGuard, AuthAccountGuard] },
+  { path: 'medicalAnalysis/crud/edit/:id', component: MedicalAnalysisEditComponent, canActivate: [AuthUserGuard, AuthAccountGuard] },
+  { path: 'medicalSelfObservation/crud/create', component: MedicalSelfObservationCreateComponent, canActivate: [AuthUserGuard, AuthAccountGuard] },
+  { path: 'medicalSelfObservation/crud/edit/:id', component: MedicalSelfObservationEditComponent, canActivate: [AuthUserGuard, AuthAccountGuard] },
   { path: '404', component: NotFoundComponent },
   { path: '**', redirectTo: '/404' }
 ];

@@ -1,10 +1,10 @@
 config = {
     db: {
         max: 10,
-        host: '167.99.147.118',
+        host: 'localhost',
         port: 5432,
         user: 'postgres',
-        password: '',
+        password: 'postgres',
         database: 'medical_history',
         idleTimeoutMillis: 1000
     }

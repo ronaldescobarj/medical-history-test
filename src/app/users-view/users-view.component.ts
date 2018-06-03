@@ -43,4 +43,20 @@ export class UsersViewComponent implements OnInit {
     })
   }
 
+  setDefault(newDefault: any) {
+    let currentDefault = this.users.find((user: any) => {
+      return user.default_user;
+    });
+    this.httpService.post('/user/changeDefault', { currentDefault: currentDefault, newDefault: newDefault })
+      .subscribe((response: any) => {
+        if (response.success) {
+          location.reload();
+        }
+      })
+  }
+
+  refresh() {
+    location.reload();
+  }
+
 }

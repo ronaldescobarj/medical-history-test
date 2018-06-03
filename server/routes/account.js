@@ -5,7 +5,7 @@ var dbConnection = require("../lib/dbConnection");
 function prepareResponse(req) {
     var response = {
         success: false,
-        response: [],
+        response: {},
         message: ""
     };
     return response;
@@ -31,19 +31,36 @@ router.get('/authenticate', function (req, res) {
                         var passwordQueryString = "SELECT * FROM medical_history.account WHERE username='"
                             + username + "' and password='" + password + "';";
                         var passwordQuery = connection.query(passwordQueryString, function (err, resultPasswordObj) {
-                            done();
                             if (err) {
                                 console.error(JSON.stringify(err));
+                                res.json(response);
                             } else {
                                 if (resultPasswordObj.rows.length > 0) {
                                     response.success = true;
-                                    response.response = resultPasswordObj.rows[0];
+                                    response.response.account = resultPasswordObj.rows[0];
+                                    var userQueryString = "SELECT * FROM medical_history.user WHERE account_id="
+                                        + response.response.account.id + " and default_user=true;";
+                                    var userQuery = connection.query(userQueryString, function (err, resultUserObj) {
+                                        done();
+                                        if (err) {
+                                            console.error(JSON.stringify(err));
+                                        } else {
+                                            if (resultUserObj.rows.length > 0) {
+                                                response.response.user = resultUserObj.rows[0];
+                                            }
+                                            else {
+                                                response.message = "No hay un usuario seleccionado por defecto";
+                                            }
+                                        }
+                                        res.json(response);
+                                    });
                                 }
                                 else {
                                     response.message = "Contraseña incorrecta";
+                                    res.json(response);
                                 }
+
                             }
-                            res.json(response);
                         });
                     }
                     else {

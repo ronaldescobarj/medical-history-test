@@ -2,12 +2,13 @@
   <button class="btn btn-secondary" title="Go back" (click)="goBack()">
     <span class="fas fa-arrow-circle-left"></span>
   </button>
-  <a class="btn btn-primary" title="Editar usuario" routerLink="/user/edit/{{userId}}">
+  <a *ngIf="!notAllowed" class="btn btn-primary" title="Editar usuario" routerLink="/user/edit/{{userId}}">
     <span class="fas fa-user-edit"></span>
   </a>
 </div>
 
-<blockquote *ngIf="show" class="blockquote text-center">
+<h2 *ngIf="show && notAllowed">El usuario seleccionado no existe o pertenece a otra cuenta</h2>
+<blockquote *ngIf="show && !notAllowed" class="blockquote text-center">
   <h1>
     <b>Informacion del usuario</b>
   </h1>
@@ -24,14 +25,18 @@
           <td>Apellido</td>
           <td>{{user.last_name}}</td>
         </tr>
-        <!--         <tr>
+        <tr>
           <td>Fecha de nacimiento</td>
-          <td>{{consultation.birthdate}}</td>
+          <td>{{user.birthdate | date:'dd/MM/yyyy'}}</td>
         </tr>
         <tr>
           <td>Alergias</td>
-          <td>{{consultation.allergies}}</td>
-        </tr> -->
+          <td>{{user.allergies}}</td>
+        </tr>
+        <tr>
+          <td>Enfermedades</td>
+          <td>{{user.diseases}}</td>
+        </tr>
       </tbody>
     </table>
   </div>

@@ -12,8 +12,14 @@ export class LoginService {
       .subscribe((response: any) => {
         callback(response.message);
         if (response.success) {
-          localStorage.setItem('currentAccount', JSON.stringify(response.response));
-          this.router.navigateByUrl('/users');
+          localStorage.setItem('currentAccount', JSON.stringify(response.response.account));
+          if (response.response.user) {
+            localStorage.setItem('currentUser', JSON.stringify(response.response.user));
+            this.router.navigateByUrl('/registers');
+          }
+          else {
+            this.router.navigateByUrl('/user/create/#');
+          }
         }
       })
   }

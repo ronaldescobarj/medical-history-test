@@ -41,19 +41,17 @@
       <thead>
         <tr>
           <th>
+            <button *ngIf="sort.date == 0" class="btn btn-default" (click)="sortRegisters('date')">Fecha</button>
+            <button *ngIf="sort.date == 1" class="btn btn-default" (click)="sortRegisters('date')">Fecha &darr;</button>
+            <button *ngIf="sort.date == 2" class="btn btn-default" (click)="sortRegisters('date')">Fecha &uarr;</button>
+          </th>
+          <th>
             <button *ngIf="sort.summary == 0" class="btn btn-default" (click)="sortRegisters('summary')">Resumen</button>
             <button *ngIf="sort.summary == 1" class="btn btn-default" (click)="sortRegisters('summary')">Resumen &darr;</button>
             <button *ngIf="sort.summary == 2" class="btn btn-default" (click)="sortRegisters('summary')">Resumen &uarr;</button>
           </th>
           <th>
-            <button *ngIf="sort.type == 0" class="btn btn-default" (click)="sortRegisters('type')">Tipo</button>
-            <button *ngIf="sort.type == 1" class="btn btn-default" (click)="sortRegisters('type')">Tipo &darr;</button>
-            <button *ngIf="sort.type == 2" class="btn btn-default" (click)="sortRegisters('type')">Tipo &uarr;</button>
-          </th>
-          <th>
-            <button *ngIf="sort.date == 0" class="btn btn-default" (click)="sortRegisters('date')">Fecha</button>
-            <button *ngIf="sort.date == 1" class="btn btn-default" (click)="sortRegisters('date')">Fecha &darr;</button>
-            <button *ngIf="sort.date == 2" class="btn btn-default" (click)="sortRegisters('date')">Fecha &uarr;</button>
+            <button class="btn btn-default">Tipo</button>
           </th>
           <th>
             <button class="btn btn-default">Opciones</button>
@@ -62,9 +60,9 @@
       </thead>
       <tbody>
         <tr *ngFor="let register of registers | paginate: { itemsPerPage: 10, currentPage: p }; let i = index">
+          <td>{{register.date | date:'dd/MM/yyyy'}}</td>
           <td>{{register.summary}}</td>
           <td>{{register.type}}</td>
-          <td>{{register.date}}</td>
           <td>
             <button class="btn btn-secondary" title="View" (click)="viewRegister(register)">
               <span class="fa fa-info-circle"></span>

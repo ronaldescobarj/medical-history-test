@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpService } from '../http.service';
 import { Router } from '@angular/router';
+import { IMyDpOptions } from 'mydatepicker';
 
 @Component({
   selector: 'app-medical-analysis-create',
@@ -14,8 +15,10 @@ export class MedicalAnalysisCreateComponent implements OnInit {
   images: any = [];
   typeError: boolean;
   dateError: boolean;
+  imagesError: boolean;
   firstTime: boolean;
   typeValidator: boolean;
+  loading: boolean = true;
 
   constructor(private httpService: HttpService, private router: Router) { }
 
@@ -41,8 +44,9 @@ export class MedicalAnalysisCreateComponent implements OnInit {
       this.medicalAnalysis.id = Math.floor(Math.random() * 100000);
       this.medicalAnalysis.user_id = JSON.parse(localStorage.getItem('currentUser')).id;
       var imagesObj = { images: [] };
+      this.medicalAnalysis.date = this.medicalAnalysis.date.date.year + '-' + this.medicalAnalysis.date.date.month + '-' + this.medicalAnalysis.date.date.day;
+      this.loading = true;
       this.httpService.post('/analysis/create', this.medicalAnalysis).subscribe((response: any) => {
-        console.log(response);
         if (response.success) {
           this.images.forEach((image: any) => {
             let imageObj = {
@@ -55,15 +59,20 @@ export class MedicalAnalysisCreateComponent implements OnInit {
             imagesObj.images.push(imageObj);
           });
           if (this.images.length) {
-            console.log("einter");
-            this.httpService.post('/image/add', imagesObj).subscribe((res: any) => {
+            this.httpService.post('/analysisImage/add', imagesObj).subscribe((res: any) => {
               if (res.success) {
                 this.router.navigateByUrl('/registers');
               }
+              this.loading = false;
             })
           }
-          else
+          else {
             this.router.navigateByUrl('/registers');
+            this.loading = false;
+          }
+        }
+        else {
+          this.loading = false;
         }
       })
     }
@@ -95,6 +104,12 @@ export class MedicalAnalysisCreateComponent implements OnInit {
   validate() {
     let res = true;
     this.firstTime = false;
+    this.images.forEach(image => {
+      if (image.filetype != "image/jpeg" && image.filetype != "image/png" && image.filetype != "image/jpg") {
+        res = false;
+        this.imagesError = true;
+      }
+    });
     if (this.medicalAnalysis.type == "") {
       this.typeError = true;
       this.typeValidator = false;
@@ -118,5 +133,16 @@ export class MedicalAnalysisCreateComponent implements OnInit {
       return 'tomato'
     return "";
   }
-
+  public myDatePickerOptions: IMyDpOptions = {
+    dateFormat: 'dd-mm-yyyy',
+    editableDateField: false,
+    openSelectorOnInputClick: true,
+    dayLabels: { su: 'Dom', mo: 'Lun', tu: 'Mar', we: 'Mie', th: 'Jue', fr: 'Vie', sa: 'Sab' },
+    todayBtnTxt: "Hoy",
+    monthLabels: { 1: 'Enero', 2: 'Febrero', 3: 'Marzo', 4: 'Abril', 5: 'Mayo', 6: 'Junio', 7: 'Julio', 8: 'Agosto', 9: 'Septiembre', 10: 'Octubre', 11: 'Noviembre', 12: 'Diciembre' },
+    selectorHeight: "232px",
+    selectorWidth: "350px"
+  };
+  // Initialized to specific date (09.10.2018).
+  public model: any = { date: { year: 2018, month: 10, day: 9 } };
 }

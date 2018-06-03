@@ -4,7 +4,9 @@
   </button>
 </div>
 
-<div *ngIf="show" class="container">
+<h2 *ngIf="show && action=='create' && maxUsers">No se pueden tener mas de cuatro usuarios en una cuenta</h2>
+<h2 *ngIf="show && action=='edit' && notAllowed">El usuario seleccionado no existe o pertenece a otra cuenta</h2>
+<div *ngIf="show && !maxUsers && !notAllowed" class="container">
   <div class="row">
     <div class="col-md-12 col-md-offset-6">
       <form class="form-horizontal" role="form">
@@ -12,23 +14,52 @@
         <h2 *ngIf="action=='create'">Crear usuario</h2>
         <div class="form-group">
           <div class="col-md-9">
-            <label class="validation-message">Nombre</label>
-            <input name="name" [(ngModel)]="user.name" type="text" placeholder="Nombre" class="form-control" />
+            <label class="validation-message">Nombre *</label>
+            <input name="nameInput" (input)="nameValidator=true; nameError=false" [style.border-color]="borderColor(true)" [(ngModel)]="user.name"
+              type="text" placeholder="Nombre..." class="form-control" />
+            <div *ngIf="nameError && !firstTime" style="color: tomato">Introduzca el nombre</div>
           </div>
         </div>
         <div class="form-group">
           <div class="col-md-9">
-            <label class="validation-message">Apellido</label>
-            <input name="doctor" [(ngModel)]="user.last_name" type="text" placeholder="Apellido" class="form-control" />
+            <label class="validation-message">Apellido *</label>
+            <input name="lastNameInput" (input)="lastNameValidator=true; lastNameError=false" [style.border-color]="borderColor(false)"
+              [(ngModel)]="user.last_name" type="text" placeholder="Apellido..." class="form-control" />
+            <div *ngIf="lastNameError && !firstTime" style="color: tomato">Introduzca el apellido</div>
           </div>
         </div>
         <div class="form-group">
-          <div class="col-md-3">
-            <button class="btn btn-success btn-block" (click)="saveChanges()">Guardar</button>
-            <button class="btn btn-danger btn-block" (click)="goBack()">Cancelar</button>
+          <div class="col-md-9">
+            <label class="validation-message">Fecha de nacimiento *</label>
+            <my-date-picker name="mydate" [placeholder]="'dd-mm-aaaa'" [options]="myDatePickerOptions" [(ngModel)]="user.birthdate" required></my-date-picker>
+            <div *ngIf="birthdateError && !firstTime" style="color: tomato">Introduzca la fecha</div>
           </div>
         </div>
-        <div *ngIf="!firstTime && errorMessage" class="help-block">{{errorMessage}}</div>
+        <div class=" form-group ">
+          <div class="col-md-9 ">
+            <label class="validation-message ">Alergias</label>
+            <input name="allergies " [(ngModel)]="user.allergies " type="text " placeholder="Alergias " class="form-control " />
+          </div>
+        </div>
+        <div class="form-group ">
+          <div class="col-md-9 ">
+            <label class="validation-message ">Enfermedades</label>
+            <input name="diseases " [(ngModel)]="user.diseases " type="text " placeholder="Enfermedades " class="form-control " />
+          </div>
+        </div>
+        <div class="form-group ">
+          <div class="col-md-9 ">
+            <button class="col-md-3 btn btn-success btn-block " (click)="saveChanges() ">Guardar</button>
+            <div *ngIf="loading" class="help-block">Guardando...</div>
+            <button class="col-md-3 btn btn-danger btn-block " (click)="goBack() ">Cancelar</button>
+          </div>
+          <div class="form-group ">
+            <div class="col-md-9 ">
+              <div>Los campos con * son obligatorios</div>
+              <div *ngIf="(nameError || lastNameError) && !firstTime " style="color: tomato ">Por favor introduzca los datos marcados como obligatorios</div>
+            </div>
+          </div>
+        </div>
       </form>
     </div>
   </div>

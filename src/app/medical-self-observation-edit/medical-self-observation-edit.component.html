@@ -41,13 +41,15 @@
                 <div class="form-group">
                     <div class="col-md-9">
                         <label class="validation-message">Fecha *</label>
-                        <input name="date" [(ngModel)]="medicalSelfObservation.date" placeholder="AAAA-MM-DD" class="form-control">
+                        <my-date-picker name="mydate" [placeholder]="'dd-mm-aaaa'" [options]="myDatePickerOptions" [(ngModel)]="medicalSelfObservation.date"
+                            required></my-date-picker>
                         <div *ngIf="dateError && !firstTime" style="color: tomato">Introduzca la fecha</div>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="col-md-3">
-                        <button class="btn btn-success btn-block" (click)="saveChanges()">Guardar</button>
+                        <button [disabled]="loading" class="btn btn-success btn-block" (click)="saveChanges()">Guardar</button>
+                        <div *ngIf="loading" class="help-block">Guardando...</div>
                     </div>
                 </div>
                 <div class="form-group">

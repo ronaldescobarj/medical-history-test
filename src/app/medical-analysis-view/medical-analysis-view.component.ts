@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { HttpService } from '../http.service';
-import { DomSanitizer } from '@angular/platform-browser';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-medical-analysis-view',
@@ -18,8 +18,11 @@ export class MedicalAnalysisViewComponent implements OnInit {
   error: string;
   userId: any;
 
+  showImage: boolean;
+  imgModal: any;
   testImage: any;
 
+  // imageDecoded: any;
   imagesDecoded: any[];
 
   constructor(
@@ -31,6 +34,7 @@ export class MedicalAnalysisViewComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.showImage = false;
     this.id = this.route.snapshot.paramMap.get('id');
     this.userId = JSON.parse(localStorage.getItem('currentUser')).id;
     this.httpService.get('/analysis/get?id=' + this.id + '&userId=' + this.userId)
@@ -38,7 +42,7 @@ export class MedicalAnalysisViewComponent implements OnInit {
         if (response.success) {
           if (response.response.id) {
             this.analysis = response.response;
-            this.httpService.get('/image/get?analysisId=' + this.analysis.id).subscribe((res: any) => {
+            this.httpService.get('/analysisImage/get?analysisId=' + this.analysis.id).subscribe((res: any) => {
               if (response.success) {
                 this.images = res.response;
                 this.imagesDecoded = [];
@@ -62,4 +66,8 @@ export class MedicalAnalysisViewComponent implements OnInit {
     this.router.navigateByUrl('/registers');
   }
 
+  openImageModal(img: any) {
+    this.imgModal = img;
+    this.showImage = true;
+  }
 }

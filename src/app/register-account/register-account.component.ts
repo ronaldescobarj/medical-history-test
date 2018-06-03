@@ -9,10 +9,17 @@ import { Router } from '@angular/router';
 })
 export class RegisterAccountComponent implements OnInit {
 
-  firstTime: boolean = true;
+  firstTime: boolean;
   account: any = {};
-  errorMessage: string = "";
+  errorMessage: string;
   loading: boolean = false;
+
+  usernameError: boolean;
+  passwordError: boolean;
+  passwordConfirmError: boolean;
+  usernameValidator: boolean;
+  passwordValidator: boolean;
+  passwordConfirmValidator: boolean;
 
   constructor(private httpService: HttpService, private router: Router) { }
 
@@ -22,14 +29,18 @@ export class RegisterAccountComponent implements OnInit {
       password: "",
       passwordConfirm: ""
     }
+    this.firstTime = true;
+    this.loading = false;
+    this.passwordConfirmError = false;
+    this.passwordError = false;
+    this.usernameError = false;
+    this.passwordValidator = true;
+    this.passwordConfirmValidator = true;
+    this.usernameValidator = true;
   }
 
   register() {
-    this.firstTime = false;
-    if (this.account.password != this.account.passwordConfirm) {
-      this.errorMessage = "Las contraseñas no coinciden";
-    }
-    else if (this.account.username != "" && this.account.password != "" && this.account.passwordConfirm != "") {
+    if (this.validate()) {
       this.loading = true;
       this.account.id = Math.floor(Math.random() * 100000);
       this.httpService.post('/account/create', this.account).subscribe((response: any) => {
@@ -42,8 +53,54 @@ export class RegisterAccountComponent implements OnInit {
         this.loading = false;
       })
     }
-    else {
-      this.errorMessage = "Faltan campos a introducir";
-    }
   }
+
+  validate() {
+    let res = true;
+    this.firstTime = false;
+    if (this.account.password == "") {
+      this.passwordError = true;
+      this.passwordValidator = false;
+      res = false;
+    } else {
+      this.passwordError = false;
+      this.passwordValidator = true;
+    }
+
+    if (this.account.username == "") {
+      this.usernameError = true;
+      this.usernameValidator = false;
+      res = false;
+    } else {
+      this.usernameError = false;
+      this.usernameValidator = true;
+    }
+
+    if (this.account.passwordConfirm == "") {
+      this.passwordConfirmError = true;
+      this.passwordConfirmValidator = false;
+      res = false;
+    } else {
+      this.passwordConfirmError = false;
+      this.passwordConfirmValidator = true;
+    }
+    return res;
+  }
+
+  borderColor(type: any) {
+    if (type == 'password') {
+      if (!this.firstTime && (!this.passwordValidator || this.passwordError))
+        return 'tomato'
+    }
+    if (type == 'username') {
+      if (!this.firstTime && (!this.usernameValidator || this.usernameError))
+        return 'tomato'
+    }
+    if (type == 'passwordConfirm') {
+      if (!this.firstTime && (!this.passwordConfirmValidator || this.passwordConfirmError))
+        return 'tomato'
+    }
+    return "";
+  }
+
 }

@@ -22,10 +22,11 @@ export class MedicalRegistersViewComponent implements OnInit {
   listOfTypes: String[];
   subscription: Subscription;
   userId: any;
+
   constructor(private httpService: HttpService, private router: Router, private location: Location) { }
 
   ngOnInit() {
-    this.listOfTypes = ["Todos", "Consulta", "Observacion propia", "Analisis"]
+    this.listOfTypes = ["Todos los tipos", "Consulta", "Observacion propia", "Analisis"]
     this.selectedType = this.listOfTypes[0];
     this.originalRegisters = [];
     this.sort = {
@@ -101,7 +102,7 @@ export class MedicalRegistersViewComponent implements OnInit {
   }
 
   filterByType(event: any) {
-    if (event != "Todos") {
+    if (event != "Todos los tipos") {
       this.search(this.removeSpecialCharacters(event))
     }
     else {
@@ -207,8 +208,7 @@ export class MedicalRegistersViewComponent implements OnInit {
     let temp: any = [];
     this.registers.forEach((register: any) => {
       if (this.removeSpecialCharacters(register.date).includes(this.removeSpecialCharacters(textField))
-        || this.removeSpecialCharacters(register.summary).includes(this.removeSpecialCharacters(textField))
-        || this.removeSpecialCharacters(register.type).includes(this.removeSpecialCharacters(textField))) {
+        || this.removeSpecialCharacters(register.summary).includes(this.removeSpecialCharacters(textField))) {
         temp.push(register);
       }
       else {
