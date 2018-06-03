@@ -103,7 +103,7 @@ export class MedicalRegistersViewComponent implements OnInit {
 
   filterByType(event: any) {
     if (event != "Todos los tipos") {
-      this.search(this.removeSpecialCharacters(event))
+      this.search(this.removeSpecialCharacters(event), true)
     }
     else {
       this.registers = this.originalRegisters;
@@ -203,12 +203,14 @@ export class MedicalRegistersViewComponent implements OnInit {
     return res;
   }
 
-  search(textField: any) {
+  search(textField: any, allowType?: boolean) {
     this.registers = this.originalRegisters;
     let temp: any = [];
     this.registers.forEach((register: any) => {
       if (this.removeSpecialCharacters(register.date).includes(this.removeSpecialCharacters(textField))
-        || this.removeSpecialCharacters(register.summary).includes(this.removeSpecialCharacters(textField))) {
+        || this.removeSpecialCharacters(register.summary).includes(this.removeSpecialCharacters(textField))
+        || (this.removeSpecialCharacters(register.type).includes(this.removeSpecialCharacters(textField)) && allowType)
+      ) {
         temp.push(register);
       }
       else {
