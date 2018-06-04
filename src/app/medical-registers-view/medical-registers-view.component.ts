@@ -22,6 +22,7 @@ export class MedicalRegistersViewComponent implements OnInit {
   listOfTypes: String[];
   subscription: Subscription;
   userId: any;
+  noRegisters: boolean = false;
 
   constructor(private httpService: HttpService, private router: Router, private location: Location) { }
 
@@ -39,13 +40,18 @@ export class MedicalRegistersViewComponent implements OnInit {
       this.subscription.unsubscribe();
     this.subscription = this.httpService.get('/registers/list?userId=' + this.userId).subscribe((response: any) => {
       if (response.success) {
-        this.registers = response.response;
-        this.registers.forEach((register: any) => this.originalRegisters.push(register));
-        this.registers.sort((a, b) => {
-          a = new Date(a.date);
-          b = new Date(b.date);
-          return a > b ? -1 : a < b ? 1 : 0;
-        });
+        if (response.response.length == 0) {
+          this.registers = response.response;
+          this.registers.forEach((register: any) => this.originalRegisters.push(register));
+          this.registers.sort((a, b) => {
+            a = new Date(a.date);
+            b = new Date(b.date);
+            return a > b ? -1 : a < b ? 1 : 0;
+          });
+        }
+        else {
+          this.noRegisters = true;
+        }
       }
     })
 
