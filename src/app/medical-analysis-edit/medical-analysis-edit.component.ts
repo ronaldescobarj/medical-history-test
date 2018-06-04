@@ -1,9 +1,10 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { HttpService } from '../http.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { DomSanitizer } from '@angular/platform-browser';
 import { IMyDpOptions, IMyDate } from 'mydatepicker';
+import { Subscription } from 'rxjs/Subscription';
 
 
 @Component({
@@ -11,7 +12,7 @@ import { IMyDpOptions, IMyDate } from 'mydatepicker';
   templateUrl: './medical-analysis-edit.component.html',
   styleUrls: ['./medical-analysis-edit.component.css']
 })
-export class MedicalAnalysisEditComponent implements OnInit {
+export class MedicalAnalysisEditComponent implements OnInit, OnDestroy {
 
   medicalAnalysis: any;
   id;
@@ -29,6 +30,8 @@ export class MedicalAnalysisEditComponent implements OnInit {
   imagesError: boolean;
   userId: any;
   loading: boolean = false;
+  subscription: Subscription;
+  nestedSubscription: Subscription;
 
   constructor(
     private httpService: HttpService,
@@ -46,7 +49,12 @@ export class MedicalAnalysisEditComponent implements OnInit {
     this.firstTime = true;
     this.userId = JSON.parse(localStorage.getItem('currentUser')).id;
     this.id = this.route.snapshot.paramMap.get('id');
-    this.httpService.get('/analysis/get?id=' + this.id + '&userId=' + this.userId)
+    if (this.subscription)
+      this.subscription.unsubscribe();
+    if (this.nestedSubscription)
+      this.nestedSubscription.unsubscribe();
+
+    this.subscription = this.httpService.get('/analysis/get?id=' + this.id + '&userId=' + this.userId)
       .subscribe((response: any) => {
         if (response.success) {
           if (response.response.id) {
@@ -59,7 +67,7 @@ export class MedicalAnalysisEditComponent implements OnInit {
                   day: parseInt(this.medicalAnalysis.date.slice(8, 10)),
                 }
             };
-            this.httpService.get('/analysisImage/get?analysisId=' + this.medicalAnalysis.id).subscribe((res: any) => {
+            this.nestedSubscription = this.httpService.get('/analysisImage/get?analysisId=' + this.medicalAnalysis.id).subscribe((res: any) => {
               if (res.success) {
                 this.images = res.response;
                 this.imagesDecoded = [];
@@ -80,12 +88,24 @@ export class MedicalAnalysisEditComponent implements OnInit {
       });
   }
 
+  ngOnDestroy() {
+    if (this.subscription)
+      this.subscription.unsubscribe();
+    if (this.nestedSubscription)
+      this.nestedSubscription.unsubscribe();
+  }
+
   saveChanges() {
     if (this.validate()) {
       var imagesObj = { images: [] };
       this.medicalAnalysis.date = this.medicalAnalysis.date.date.year + '-' + this.medicalAnalysis.date.date.month + '-' + this.medicalAnalysis.date.date.day;
       this.loading = true;
-      this.httpService.post('/analysis/update', this.medicalAnalysis).subscribe((response: any) => {
+      if (this.subscription)
+        this.subscription.unsubscribe();
+      if (this.nestedSubscription)
+        this.nestedSubscription.unsubscribe();
+
+      this.subscription = this.httpService.post('/analysis/update', this.medicalAnalysis).subscribe((response: any) => {
         if (response.success) {
           for (let i = 0; i < this.images.length; i++) {
             let imageObj = {
@@ -98,7 +118,7 @@ export class MedicalAnalysisEditComponent implements OnInit {
             imagesObj.images.push(imageObj);
           }
           if (this.images.length) {
-            this.httpService.post('/analysisImage/add', imagesObj).subscribe((res: any) => {
+            this.nestedSubscription = this.httpService.post('/analysisImage/add', imagesObj).subscribe((res: any) => {
               if (res.success) {
                 this.router.navigateByUrl('/registers');
               }
@@ -122,7 +142,9 @@ export class MedicalAnalysisEditComponent implements OnInit {
   }
 
   deleteImage(id: any) {
-    this.httpService.post('/analysisImage/delete', { id: id }).subscribe((response: any) => {
+    if (this.subscription)
+      this.subscription.unsubscribe();
+    this.subscription = this.httpService.post('/analysisImage/delete', { id: id }).subscribe((response: any) => {
       if (response.success)
         location.reload();
     })

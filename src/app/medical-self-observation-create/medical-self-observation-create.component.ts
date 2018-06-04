@@ -1,14 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpService } from '../http.service';
 import { IMyDpOptions } from 'mydatepicker';
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'app-medical-self-observation-create',
   templateUrl: './medical-self-observation-create.component.html',
   styleUrls: ['./medical-self-observation-create.component.css']
 })
-export class MedicalSelfObservationCreateComponent implements OnInit {
+export class MedicalSelfObservationCreateComponent implements OnInit, OnDestroy {
 
   medicalSelfObservation: any = {};
 
@@ -17,6 +18,7 @@ export class MedicalSelfObservationCreateComponent implements OnInit {
   firstTime: boolean;
   observationValidator: boolean;
   loading: boolean = false;
+  subscription: Subscription;
 
   constructor(private httpService: HttpService, private router: Router) { }
 
@@ -34,13 +36,22 @@ export class MedicalSelfObservationCreateComponent implements OnInit {
     }
   }
 
+  ngOnDestroy() {
+    if (this.subscription)
+      this.subscription.unsubscribe();
+  }
+
   createSelfObservation() {
     if (this.validate()) {
       this.medicalSelfObservation.id = Math.floor(Math.random() * 100000);
       this.medicalSelfObservation.user_id = JSON.parse(localStorage.getItem('currentUser')).id;
       this.medicalSelfObservation.date = this.medicalSelfObservation.date.date.year + '-' + this.medicalSelfObservation.date.date.month + '-' + this.medicalSelfObservation.date.date.day;
       this.loading = true;
-      this.httpService.post('/selfObservation/create', this.medicalSelfObservation).subscribe((response: any) => {
+
+      if (this.subscription)
+        this.subscription.unsubscribe();
+
+      this.subscription = this.httpService.post('/selfObservation/create', this.medicalSelfObservation).subscribe((response: any) => {
         if (response.success)
           this.router.navigateByUrl('/registers');
         this.loading = false;

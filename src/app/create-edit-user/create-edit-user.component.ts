@@ -1,14 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HttpService } from '../http.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IMyDpOptions } from 'mydatepicker';
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'app-create-edit-user',
   templateUrl: './create-edit-user.component.html',
   styleUrls: ['./create-edit-user.component.css']
 })
-export class CreateEditUserComponent implements OnInit {
+export class CreateEditUserComponent implements OnInit, OnDestroy {
 
   userId: any;
   action: any;
@@ -26,6 +27,7 @@ export class CreateEditUserComponent implements OnInit {
   loading: boolean = false;
   maxUsers: boolean = false;
   notAllowed: boolean = false;
+  subscription: Subscription;
 
   constructor(private httpService: HttpService, private route: ActivatedRoute, private router: Router) { }
 
@@ -39,9 +41,13 @@ export class CreateEditUserComponent implements OnInit {
     this.dateError = false;
     let accountId = JSON.parse(localStorage.getItem('currentAccount')).id;
     this.action = this.route.snapshot.paramMap.get('action');
+
+    if (this.subscription)
+      this.subscription.unsubscribe();
+
     if (this.action == "edit") {
       this.userId = this.route.snapshot.paramMap.get('id');
-      this.httpService.get('/user/get?id=' + this.userId + '&accountId=' + accountId)
+      this.subscription = this.httpService.get('/user/get?id=' + this.userId + '&accountId=' + accountId)
         .subscribe((response: any) => {
           if (response.success) {
             if (response.response.id) {
@@ -63,7 +69,7 @@ export class CreateEditUserComponent implements OnInit {
         });
     }
     if (this.action == "create") {
-      this.httpService.get('/user/list?accountId=' + JSON.parse(localStorage.getItem('currentAccount')).id)
+      this.subscription = this.httpService.get('/user/list?accountId=' + JSON.parse(localStorage.getItem('currentAccount')).id)
         .subscribe((response: any) => {
           if (response.success) {
             this.firstUser = response.response.length == 0;
@@ -81,6 +87,11 @@ export class CreateEditUserComponent implements OnInit {
     }
   }
 
+  ngOnDestroy() {
+    if (this.subscription)
+      this.subscription.unsubscribe();
+  }
+
   saveChanges() {
     let apiRoute = "";
     if (this.validate()) {
@@ -95,7 +106,9 @@ export class CreateEditUserComponent implements OnInit {
       this.loading = true;
       this.user.birthdate = this.user.birthdate.date.year + '-' + this.user.birthdate.date.month
         + '-' + this.user.birthdate.date.day;
-      this.httpService.post('/user/' + apiRoute, this.user).subscribe((response: any) => {
+      if (this.subscription)
+        this.subscription.unsubscribe();
+      this.subscription = this.httpService.post('/user/' + apiRoute, this.user).subscribe((response: any) => {
         if (response.success) {
           this.goBack();
         }

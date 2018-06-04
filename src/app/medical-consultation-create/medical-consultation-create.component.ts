@@ -1,14 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HttpService } from '../http.service';
 import { Router } from '@angular/router';
 import { IMyDpOptions } from 'mydatepicker';
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'app-medical-consultation-create',
   templateUrl: './medical-consultation-create.component.html',
   styleUrls: ['./medical-consultation-create.component.css']
 })
-export class MedicalConsultationCreateComponent implements OnInit {
+export class MedicalConsultationCreateComponent implements OnInit, OnDestroy {
 
   medicalConsultation: any = {};
 
@@ -21,6 +22,9 @@ export class MedicalConsultationCreateComponent implements OnInit {
   firstTime: boolean;
   images: any = [];
   loading: boolean = false;
+
+  subscription: Subscription;
+  nestedSubscription: Subscription;
 
   constructor(private httpService: HttpService, private router: Router) { }
 
@@ -46,6 +50,13 @@ export class MedicalConsultationCreateComponent implements OnInit {
     }
   }
 
+  ngOnDestroy() {
+    if (this.subscription)
+      this.subscription.unsubscribe();
+    if (this.nestedSubscription)
+      this.nestedSubscription.unsubscribe();
+  }
+
   createConsultation() {
     if (this.validate()) {
       this.medicalConsultation.id = Math.floor(Math.random() * 100000);
@@ -54,7 +65,13 @@ export class MedicalConsultationCreateComponent implements OnInit {
       this.medicalConsultation.date = this.medicalConsultation.date.date.year + '-' +
         this.medicalConsultation.date.date.month + '-' + this.medicalConsultation.date.date.day;
       this.loading = true;
-      this.httpService.post('/consultation/create', this.medicalConsultation)
+
+      if (this.subscription)
+        this.subscription.unsubscribe();
+      if (this.nestedSubscription)
+        this.nestedSubscription.unsubscribe();
+
+      this.subscription = this.httpService.post('/consultation/create', this.medicalConsultation)
         .subscribe((response: any) => {
           if (response.success) {
             this.images.forEach((image: any) => {
@@ -68,7 +85,7 @@ export class MedicalConsultationCreateComponent implements OnInit {
               imagesObj.images.push(imageObj);
             });
             if (this.images.length) {
-              this.httpService.post('/consultationImage/add', imagesObj).subscribe((res: any) => {
+              this.nestedSubscription = this.httpService.post('/consultationImage/add', imagesObj).subscribe((res: any) => {
                 if (res.success) {
                   this.router.navigateByUrl('/registers');
                 }

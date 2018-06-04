@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpService } from '../http.service';
 import { Location } from '@angular/common';
@@ -10,7 +10,7 @@ import { Subscription } from 'rxjs/Subscription';
   templateUrl: './medical-registers-view.component.html',
   styleUrls: ['./medical-registers-view.component.css']
 })
-export class MedicalRegistersViewComponent implements OnInit {
+export class MedicalRegistersViewComponent implements OnInit, OnDestroy {
 
   registers: any[];
   originalRegisters: any[];
@@ -21,6 +21,7 @@ export class MedicalRegistersViewComponent implements OnInit {
   selectedType: String;
   listOfTypes: String[];
   subscription: Subscription;
+  nestedSubscription: Subscription;
   userId: any;
   noRegisters: boolean = false;
 
@@ -36,8 +37,12 @@ export class MedicalRegistersViewComponent implements OnInit {
       summary: 0
     };
     this.userId = JSON.parse(localStorage.getItem('currentUser')).id;
+
     if (this.subscription)
       this.subscription.unsubscribe();
+    if (this.nestedSubscription)
+      this.nestedSubscription.unsubscribe();
+
     this.subscription = this.httpService.get('/registers/list?userId=' + this.userId).subscribe((response: any) => {
       if (response.success) {
         if (response.response.length == 0) {
@@ -55,6 +60,13 @@ export class MedicalRegistersViewComponent implements OnInit {
       }
     })
 
+  }
+
+  ngOnDestroy() {
+    if (this.subscription)
+      this.subscription.unsubscribe();
+    if (this.nestedSubscription)
+      this.nestedSubscription.unsubscribe();
   }
 
   sortRegisters(value: any) {
@@ -166,10 +178,16 @@ export class MedicalRegistersViewComponent implements OnInit {
         break;
     }
     type = type + "/delete";
-    this.httpService.post(type, register).subscribe((response: any) => {
+
+    if (this.subscription)
+      this.subscription.unsubscribe();
+    if (this.nestedSubscription)
+      this.nestedSubscription.unsubscribe();
+
+    this.subscription = this.httpService.post(type, register).subscribe((response: any) => {
       if (response.success) {
         if (type == "/analysis") {
-          this.httpService.post('/image/delete', { analysis_id: register.id }).subscribe((res: any) => {
+          this.nestedSubscription = this.httpService.post('/image/delete', { analysis_id: register.id }).subscribe((res: any) => {
             if (res.success)
               location.reload();
           })

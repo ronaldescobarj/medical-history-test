@@ -1,15 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { HttpService } from '../http.service';
 import { Location } from '@angular/common';
 import { IMyDpOptions } from 'mydatepicker';
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'app-medical-self-observation-edit',
   templateUrl: './medical-self-observation-edit.component.html',
   styleUrls: ['./medical-self-observation-edit.component.css']
 })
-export class MedicalSelfObservationEditComponent implements OnInit {
+export class MedicalSelfObservationEditComponent implements OnInit, OnDestroy {
 
   medicalSelfObservation: any;
   id: any;
@@ -23,6 +24,7 @@ export class MedicalSelfObservationEditComponent implements OnInit {
   firstTime: boolean;
   observationValidator: boolean;
 
+  subscription: Subscription;
   constructor(private httpService: HttpService, private route: ActivatedRoute, private location: Location, private router: Router) { }
 
   ngOnInit() {
@@ -53,11 +55,20 @@ export class MedicalSelfObservationEditComponent implements OnInit {
         }
       })
   }
+
+  ngOnDestroy() {
+    if (this.subscription)
+      this.subscription.unsubscribe();
+  }
+
   saveChanges() {
+    if (this.subscription)
+      this.subscription.unsubscribe();
+
     if (this.validate()) {
       this.medicalSelfObservation.date = this.medicalSelfObservation.date.date.year + '-' + this.medicalSelfObservation.date.date.month + '-' + this.medicalSelfObservation.date.date.day;
       this.loading = true;
-      this.httpService.post('/selfObservation/update', this.medicalSelfObservation).subscribe((response: any) => {
+      this.subscription = this.httpService.post('/selfObservation/update', this.medicalSelfObservation).subscribe((response: any) => {
         if (response.success)
           this.router.navigateByUrl('/registers');
         this.loading = false;

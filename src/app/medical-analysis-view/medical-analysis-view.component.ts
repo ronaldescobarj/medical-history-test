@@ -1,15 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { HttpService } from '../http.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'app-medical-analysis-view',
   templateUrl: './medical-analysis-view.component.html',
   styleUrls: ['./medical-analysis-view.component.css']
 })
-export class MedicalAnalysisViewComponent implements OnInit {
+export class MedicalAnalysisViewComponent implements OnInit, OnDestroy {
 
   analysis: any;
   id: String;
@@ -22,6 +23,8 @@ export class MedicalAnalysisViewComponent implements OnInit {
   imgModal: any;
   testImage: any;
 
+  subscription: Subscription;
+  nestedSubscription: Subscription;
   // imageDecoded: any;
   imagesDecoded: any[];
 
@@ -37,12 +40,17 @@ export class MedicalAnalysisViewComponent implements OnInit {
     this.showImage = false;
     this.id = this.route.snapshot.paramMap.get('id');
     this.userId = JSON.parse(localStorage.getItem('currentUser')).id;
-    this.httpService.get('/analysis/get?id=' + this.id + '&userId=' + this.userId)
+    if (this.subscription)
+      this.subscription.unsubscribe();
+    if (this.nestedSubscription)
+      this.nestedSubscription.unsubscribe();
+
+    this.subscription = this.httpService.get('/analysis/get?id=' + this.id + '&userId=' + this.userId)
       .subscribe((response: any) => {
         if (response.success) {
           if (response.response.id) {
             this.analysis = response.response;
-            this.httpService.get('/analysisImage/get?analysisId=' + this.analysis.id).subscribe((res: any) => {
+            this.nestedSubscription = this.httpService.get('/analysisImage/get?analysisId=' + this.analysis.id).subscribe((res: any) => {
               if (response.success) {
                 this.images = res.response;
                 this.imagesDecoded = [];
@@ -62,6 +70,14 @@ export class MedicalAnalysisViewComponent implements OnInit {
         }
       })
   }
+
+  ngOnDestroy() {
+    if (this.subscription)
+      this.subscription.unsubscribe();
+    if (this.nestedSubscription)
+      this.nestedSubscription.unsubscribe();
+  }
+
   goBack() {
     this.router.navigateByUrl('/registers');
   }

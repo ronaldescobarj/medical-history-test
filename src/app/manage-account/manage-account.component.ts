@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HttpService } from '../http.service';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
@@ -9,7 +9,7 @@ import { Subscription } from 'rxjs/Subscription';
   templateUrl: './manage-account.component.html',
   styleUrls: ['./manage-account.component.css']
 })
-export class ManageAccountComponent implements OnInit {
+export class ManageAccountComponent implements OnInit, OnDestroy {
 
   accountId: any;
   account: any = {};
@@ -21,6 +21,7 @@ export class ManageAccountComponent implements OnInit {
   loading: boolean = false;
 
   deleteSubscription: Subscription;
+  subscription: Subscription;
 
   constructor(private httpService: HttpService, private router: Router, private location: Location) { }
 
@@ -31,12 +32,21 @@ export class ManageAccountComponent implements OnInit {
       newPassword: "",
       newPasswordConfirm: ""
     }
-    this.httpService.get('/account/get?id=' + this.accountId).subscribe((response: any) => {
+    if (this.subscription)
+      this.subscription.unsubscribe();
+    this.subscription = this.httpService.get('/account/get?id=' + this.accountId).subscribe((response: any) => {
       if (response.success) {
         this.account = response.response;
         this.show = true;
       }
     })
+  }
+
+  ngOnDestroy() {
+    if (this.subscription)
+      this.subscription.unsubscribe();
+    if (this.deleteSubscription)
+      this.deleteSubscription.unsubscribe();
   }
 
   resetNewPassword() {
@@ -49,6 +59,8 @@ export class ManageAccountComponent implements OnInit {
   }
 
   saveChanges() {
+    if (this.subscription)
+      this.subscription.unsubscribe();
     let condition = true;
     if (this.changePassword) {
       if (this.passwords.newPassword != this.passwords.newPasswordConfirm) {
@@ -76,7 +88,7 @@ export class ManageAccountComponent implements OnInit {
     }
     if (condition) {
       this.loading = true;
-      this.httpService.post('/account/update', this.account).subscribe((response: any) => {
+      this.subscription = this.httpService.post('/account/update', this.account).subscribe((response: any) => {
         if (response.success) {
           this.successMessage = "exito";
           this.router.navigateByUrl('/registers');

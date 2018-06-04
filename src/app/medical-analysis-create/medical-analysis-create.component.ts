@@ -1,14 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HttpService } from '../http.service';
 import { Router } from '@angular/router';
 import { IMyDpOptions } from 'mydatepicker';
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'app-medical-analysis-create',
   templateUrl: './medical-analysis-create.component.html',
   styleUrls: ['./medical-analysis-create.component.css']
 })
-export class MedicalAnalysisCreateComponent implements OnInit {
+export class MedicalAnalysisCreateComponent implements OnInit, OnDestroy {
 
   medicalAnalysis: any = {};
   testImage: any;
@@ -19,6 +20,8 @@ export class MedicalAnalysisCreateComponent implements OnInit {
   firstTime: boolean;
   typeValidator: boolean;
   loading: boolean = false;
+  subscription: Subscription;
+  imageSubscription: Subscription;
 
   constructor(private httpService: HttpService, private router: Router) { }
 
@@ -39,14 +42,25 @@ export class MedicalAnalysisCreateComponent implements OnInit {
     }
   }
 
+  ngOnDestroy() {
+    if (this.subscription)
+      this.subscription.unsubscribe();
+    if (this.imageSubscription)
+      this.imageSubscription.unsubscribe();
+  }
+
   createAnalysis() {
+    if (this.subscription)
+      this.subscription.unsubscribe();
+    if (this.imageSubscription)
+      this.imageSubscription.unsubscribe();
     if (this.validate()) {
       this.medicalAnalysis.id = Math.floor(Math.random() * 100000);
       this.medicalAnalysis.user_id = JSON.parse(localStorage.getItem('currentUser')).id;
       var imagesObj = { images: [] };
       this.medicalAnalysis.date = this.medicalAnalysis.date.date.year + '-' + this.medicalAnalysis.date.date.month + '-' + this.medicalAnalysis.date.date.day;
       this.loading = true;
-      this.httpService.post('/analysis/create', this.medicalAnalysis).subscribe((response: any) => {
+      this.subscription = this.httpService.post('/analysis/create', this.medicalAnalysis).subscribe((response: any) => {
         if (response.success) {
           this.images.forEach((image: any) => {
             let imageObj = {
@@ -59,7 +73,7 @@ export class MedicalAnalysisCreateComponent implements OnInit {
             imagesObj.images.push(imageObj);
           });
           if (this.images.length) {
-            this.httpService.post('/analysisImage/add', imagesObj).subscribe((res: any) => {
+            this.imageSubscription = this.httpService.post('/analysisImage/add', imagesObj).subscribe((res: any) => {
               if (res.success) {
                 this.router.navigateByUrl('/registers');
               }

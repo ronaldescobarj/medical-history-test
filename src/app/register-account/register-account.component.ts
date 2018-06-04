@@ -1,13 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HttpService } from '../http.service';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'app-register-account',
   templateUrl: './register-account.component.html',
   styleUrls: ['./register-account.component.css']
 })
-export class RegisterAccountComponent implements OnInit {
+export class RegisterAccountComponent implements OnInit, OnDestroy {
 
   firstTime: boolean;
   account: any = {};
@@ -20,6 +21,7 @@ export class RegisterAccountComponent implements OnInit {
   usernameValidator: boolean;
   passwordValidator: boolean;
   passwordConfirmValidator: boolean;
+  subscription: Subscription;
 
   constructor(private httpService: HttpService, private router: Router) { }
 
@@ -39,11 +41,19 @@ export class RegisterAccountComponent implements OnInit {
     this.usernameValidator = true;
   }
 
+  ngOnDestroy() {
+    if (this.subscription)
+      this.subscription.unsubscribe();
+  }
+
   register() {
+    if (this.subscription)
+      this.subscription.unsubscribe();
+
     if (this.validate()) {
       this.loading = true;
       this.account.id = Math.floor(Math.random() * 100000);
-      this.httpService.post('/account/create', this.account).subscribe((response: any) => {
+      this.subscription = this.httpService.post('/account/create', this.account).subscribe((response: any) => {
         if (response.success) {
           this.router.navigateByUrl('/login');
         }
