@@ -33,7 +33,7 @@ import { CreateEditUserComponent } from './create-edit-user/create-edit-user.com
 import { ManageAccountComponent } from './manage-account/manage-account.component';
 
 import { MyDatePickerModule } from 'mydatepicker'
-
+import { DatePipe } from '../app/pipes/datePipe.pipe';
 
 @NgModule({
   declarations: [
@@ -56,6 +56,7 @@ import { MyDatePickerModule } from 'mydatepicker'
     UserDetailsComponent,
     CreateEditUserComponent,
     ManageAccountComponent,
+    DatePipe
   ],
   imports: [
     BrowserModule,

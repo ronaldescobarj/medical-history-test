@@ -61,7 +61,7 @@
       </thead>
       <tbody>
         <tr *ngFor="let register of registers | paginate: { itemsPerPage: 10, currentPage: p }; let i = index">
-          <td>{{register.date | date:'dd/MM/yyyy'}}</td>
+          <td>{{register.date | datePipe}}</td>
           <td>{{register.summary}}</td>
           <td>{{register.type}}</td>
           <td>
