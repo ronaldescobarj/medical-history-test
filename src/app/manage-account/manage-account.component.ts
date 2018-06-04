@@ -116,8 +116,12 @@ export class ManageAccountComponent implements OnInit, OnDestroy {
       .subscribe((response: any) => {
         if (response.success) {
           this.router.navigateByUrl('/login');
+          this.refresh();
         }
       })
   }
 
+  refresh() {
+    location.reload();
+  }
 }

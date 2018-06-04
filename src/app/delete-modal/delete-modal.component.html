@@ -1,17 +1,17 @@
 <bs-modal #deleteModal>
-    <bs-modal-header>
-        <h4 class="modal-title">Esta seguro?</h4>
-    </bs-modal-header>
-    <bs-modal-body>
-      <div *ngIf="type != 'Analisis'">
-        Esta seguro que desea eliminar la {{type}}?
-      </div>
-      <div *ngIf="type == 'Analisis'">
-        Esta seguro que desea eliminar el {{type}}?
-      </div>        
-    </bs-modal-body>
-    <bs-modal-footer>
-        <button type="button" class="btn btn-default" (click)="canceling.emit(); deleteModal.close()">Cancelar</button>
-        <button type="button" class="btn btn-danger" (click)="deleteRegister(); deleteModal.close();">Eliminar</button>
-    </bs-modal-footer>
+  <bs-modal-header>
+    <h4 class="modal-title">Esta seguro?</h4>
+  </bs-modal-header>
+  <bs-modal-body>
+    <div *ngIf="type == 'Cuenta' || type == 'Consulta' || type == 'Observacion propia'">
+      Esta seguro que desea eliminar la {{type}}?
+    </div>
+    <div *ngIf="type == 'Analisis' || type == 'Usuario'">
+      Esta seguro que desea eliminar el {{type}}?
+    </div>
+  </bs-modal-body>
+  <bs-modal-footer>
+    <button type="button" class="btn btn-default" (click)="canceling.emit(); deleteModal.close()">Cancelar</button>
+    <button type="button" class="btn btn-danger" (click)="deleteRegister(); deleteModal.close();">Eliminar</button>
+  </bs-modal-footer>
 </bs-modal>

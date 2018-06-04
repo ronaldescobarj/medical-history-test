@@ -45,7 +45,7 @@ export class MedicalRegistersViewComponent implements OnInit, OnDestroy {
 
     this.subscription = this.httpService.get('/registers/list?userId=' + this.userId).subscribe((response: any) => {
       if (response.success) {
-        if (response.response.length == 0) {
+        if (response.response.length > 0) {
           this.registers = response.response;
           this.registers.forEach((register: any) => this.originalRegisters.push(register));
           this.registers.sort((a, b) => {

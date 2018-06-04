@@ -15,7 +15,7 @@
             <button class="btn btn-primary" (click)="selectUser(user)">Seleccionar</button>
             <a class="btn btn-success" routerLink="/viewUser/{{user.id}}">Ver</a>
           </div>
-          <app-delete-modal #deleteModal [type]="'usuario'" (canceling)="refresh()" (deleting)="deleteUser(user)"></app-delete-modal>
+          <app-delete-modal #deleteModal [type]="'Usuario'" (canceling)="refresh()" (deleting)="deleteUser(user)"></app-delete-modal>
           <div class="btn-group">
             <button *ngIf="!user.default_user" class="btn btn-info" (click)="setDefault(user)">Definir por defecto</button>
           </div>

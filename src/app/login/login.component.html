@@ -1,8 +1,8 @@
 <div class="col-md-6 col-md-offset-3">
-  <h2>Login</h2>
+  <h2>Iniciar sesion</h2>
   <form name="form">
     <div class="form-group">
-      <label for="username">Username</label>
+      <label for="username">Nombre de usuario</label>
       <input type="text" class="form-control" name="username" (input)="usernameValidator=true; usernameError=false" [style.border-color]="borderColor('username')"
         [(ngModel)]="account.username" />
       <div *ngIf="!firstTime && usernameError" class="help-block" style="color: tomato">El nombre de usuario es obligatorio</div>
@@ -14,7 +14,7 @@
       <div *ngIf="!firstTime && passwordError" class="help-block" style="color: tomato">La contraseña es obligatoria</div>
     </div>
     <div class="form-group">
-      <button [disabled]="loading" class="btn btn-primary" (click)="login()">Login</button>
+      <button [disabled]="loading" class="btn btn-primary" (click)="login()">Iniciar sesion</button>
       <a [routerLink]="['/register']" class="btn btn-link">Registrarse</a>
     </div>
     <div *ngIf="errorMessage" class="help-block" style="color: tomato">{{errorMessage}}</div>
