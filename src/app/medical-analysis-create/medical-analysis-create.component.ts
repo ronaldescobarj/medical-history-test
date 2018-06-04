@@ -18,7 +18,7 @@ export class MedicalAnalysisCreateComponent implements OnInit {
   imagesError: boolean;
   firstTime: boolean;
   typeValidator: boolean;
-  loading: boolean = true;
+  loading: boolean = false;
 
   constructor(private httpService: HttpService, private router: Router) { }
 

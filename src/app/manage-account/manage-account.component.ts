@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpService } from '../http.service';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'app-manage-account',
@@ -18,6 +19,8 @@ export class ManageAccountComponent implements OnInit {
   show: boolean = false;
   successMessage: string;
   loading: boolean = false;
+
+  deleteSubscription: Subscription;
 
   constructor(private httpService: HttpService, private router: Router, private location: Location) { }
 
@@ -76,6 +79,7 @@ export class ManageAccountComponent implements OnInit {
       this.httpService.post('/account/update', this.account).subscribe((response: any) => {
         if (response.success) {
           this.successMessage = "exito";
+          this.router.navigateByUrl('/registers');
         }
         this.loading = false;
       })
@@ -91,6 +95,17 @@ export class ManageAccountComponent implements OnInit {
         this.router.navigateByUrl('/users');
       }
     }
+  }
+
+  deleteAccount() {
+    if (this.deleteSubscription)
+      this.deleteSubscription.unsubscribe();
+    this.deleteSubscription = this.httpService.post('/account/delete', this.account)
+      .subscribe((response: any) => {
+        if (response.success) {
+          this.router.navigateByUrl('/login');
+        }
+      })
   }
 
 }
