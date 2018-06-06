@@ -81,6 +81,7 @@ export class MedicalConsultationEditComponent implements OnInit, OnDestroy {
                     + this.images[i].base_64_image);
                   this.imagesDecoded.push({ img: imageDecoded, id: this.images[i].id });
                 }
+                this.images = [];
                 this.show = true;
               }
             })
