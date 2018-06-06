@@ -116,8 +116,8 @@ export class MedicalConsultationEditComponent implements OnInit, OnDestroy {
             let imageObj = {
               id: Math.floor(Math.random() * 100000),
               base_64_image: this.images[i].value,
-              file_name: this.images[i].filename,
-              file_type: this.images[i].filetype,
+              file_name: this.images[i].file_name,
+              file_type: this.images[i].file_type,
               consultation_id: this.medicalConsultation.id
             };
             imagesObj.images.push(imageObj);
@@ -166,8 +166,8 @@ export class MedicalConsultationEditComponent implements OnInit, OnDestroy {
         readers[i].readAsDataURL(file);
         readers[i].onload = () => {
           this.images.push({
-            filename: file.name,
-            filetype: file.type,
+            file_name: file.name,
+            file_type: file.type,
             value: readers[i].result.split(',')[1]
           });
         };
@@ -179,7 +179,7 @@ export class MedicalConsultationEditComponent implements OnInit, OnDestroy {
     let res = true;
     this.firstTime = false;
     this.images.forEach(image => {
-      if (image.filetype != "image/jpeg" && image.filetype != "image/png" && image.filetype != "image/jpg") {
+      if (image.file_type != "image/jpeg" && image.file_type != "image/png" && image.file_type != "image/jpg") {
         res = false;
         this.imagesError = true;
       }

@@ -66,8 +66,8 @@ export class MedicalAnalysisCreateComponent implements OnInit, OnDestroy {
             let imageObj = {
               id: Math.floor(Math.random() * 100000),
               base_64_image: image.value,
-              file_name: image.filename,
-              file_type: image.filetype,
+              file_name: image.file_name,
+              file_type: image.file_type,
               analysis_id: this.medicalAnalysis.id
             };
             imagesObj.images.push(imageObj);
@@ -106,8 +106,8 @@ export class MedicalAnalysisCreateComponent implements OnInit, OnDestroy {
         readers[i].readAsDataURL(file);
         readers[i].onload = () => {
           this.images.push({
-            filename: file.name,
-            filetype: file.type,
+            file_name: file.name,
+            file_type: file.type,
             value: readers[i].result.split(',')[1]
           });
         };
@@ -119,7 +119,7 @@ export class MedicalAnalysisCreateComponent implements OnInit, OnDestroy {
     let res = true;
     this.firstTime = false;
     this.images.forEach(image => {
-      if (image.filetype != "image/jpeg" && image.filetype != "image/png" && image.filetype != "image/jpg") {
+      if (image.file_type != "image/jpeg" && image.file_type != "image/png" && image.file_type != "image/jpg") {
         res = false;
         this.imagesError = true;
       }
